@@ -1,12 +1,14 @@
+module cassowary.LinearExpression;
+
 import std.stdio;
 import std.conv;
 import std.math;
 
-import AbstractVariable;
-import Variable;
-import Tableau;
-import Cl;
-import Error;
+import cassowary.AbstractVariable;
+import cassowary.Variable;
+import cassowary.Tableau;
+import cassowary.Cl;
+import cassowary.Error;
 
 class ClLinearExpression
 {

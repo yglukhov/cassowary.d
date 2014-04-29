@@ -1,6 +1,8 @@
-import Constraint;
-import LinearExpression;
-import Strength;
+module cassowary.LinearConstraint;
+
+import cassowary.Constraint;
+import cassowary.LinearExpression;
+import cassowary.Strength;
 
 class ClLinearConstraint : ClConstraint
 {

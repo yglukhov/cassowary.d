@@ -1,4 +1,6 @@
-import SymbolicWeight;
+module cassowary.Strength;
+
+import cassowary.SymbolicWeight;
 
 public class ClStrength
 {

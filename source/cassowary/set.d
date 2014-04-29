@@ -1,3 +1,5 @@
+module cassowary.set;
+
 import std.conv;
 
 class Set(TKey = Object)

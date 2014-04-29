@@ -1,7 +1,9 @@
+module cassowary.Constraint;
+
 import std.conv;
 
-import Strength;
-import LinearExpression;
+import cassowary.Strength;
+import cassowary.LinearExpression;
 
 public abstract class ClConstraint
 {

@@ -1,6 +1,7 @@
-import std.conv;
+module cassowary.AbstractVariable;
 
-import LinearExpression;
+import std.conv;
+import cassowary.LinearExpression;
 
 abstract class ClAbstractVariable
 {

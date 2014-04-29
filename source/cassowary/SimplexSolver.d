@@ -1,26 +1,28 @@
+module cassowary.SimplexSolver;
+
 import std.array;
 import std.conv;
 import std.stdio;
 import std.math;
 
-import Tableau;
-import AbstractVariable;
-import Constraint;
-import Variable;
-import Strength;
-import Point;
-import LinearExpression;
-import LinearInequality;
-import ObjectiveVariable;
-import set;
-import EditInfo;
-import Cl;
-import Error;
-import EditConstraint;
-import StayConstraint;
-import SlackVariable;
-import DummyVariable;
-import SymbolicWeight;
+import cassowary.Tableau;
+import cassowary.AbstractVariable;
+import cassowary.Constraint;
+import cassowary.Variable;
+import cassowary.Strength;
+import cassowary.Point;
+import cassowary.LinearExpression;
+import cassowary.LinearInequality;
+import cassowary.ObjectiveVariable;
+import cassowary.set;
+import cassowary.EditInfo;
+import cassowary.Cl;
+import cassowary.Error;
+import cassowary.EditConstraint;
+import cassowary.StayConstraint;
+import cassowary.SlackVariable;
+import cassowary.DummyVariable;
+import cassowary.SymbolicWeight;
 
 
 class ClSimplexSolver : ClTableau

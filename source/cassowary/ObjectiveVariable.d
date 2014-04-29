@@ -1,4 +1,6 @@
-import AbstractVariable;
+module cassowary.ObjectiveVariable;
+
+import cassowary.AbstractVariable;
 
 class ClObjectiveVariable : ClAbstractVariable
 {

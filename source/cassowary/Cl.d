@@ -1,3 +1,5 @@
+module cassowary.Cl;
+
 import std.stdio;
 
 class CL

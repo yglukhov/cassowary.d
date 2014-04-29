@@ -1,10 +1,12 @@
+module cassowary.Tableau;
+
 import std.conv;
 
-import AbstractVariable;
-import LinearExpression;
-import Variable;
-import set;
-import Cl;
+import cassowary.AbstractVariable;
+import cassowary.LinearExpression;
+import cassowary.Variable;
+import cassowary.set;
+import cassowary.Cl;
 
 class ClTableau : CL
 {

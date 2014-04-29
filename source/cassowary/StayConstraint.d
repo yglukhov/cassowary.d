@@ -1,6 +1,8 @@
-import EditOrStayConstraint;
-import Variable;
-import Strength;
+module cassowary.StayConstraint;
+
+import cassowary.EditOrStayConstraint;
+import cassowary.Variable;
+import cassowary.Strength;
 
 public class ClStayConstraint : ClEditOrStayConstraint
 {

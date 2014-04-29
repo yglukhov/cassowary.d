@@ -1,4 +1,6 @@
-import AbstractVariable;
+module cassowary.SlackVariable;
+
+import cassowary.AbstractVariable;
 
 class ClSlackVariable : ClAbstractVariable
 {

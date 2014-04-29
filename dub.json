@@ -1,0 +1,10 @@
+{
+	"name": "cassowary.d",
+	"description": "Linear constraint solving library.",
+	"copyright": "Copyright © 2014, Yuriy Glukhov",
+	"authors": ["Yuriy Glukhov"],
+	"dependencies": {
+	},
+
+	"targetType": "library"
+}

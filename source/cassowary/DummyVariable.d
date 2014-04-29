@@ -1,4 +1,6 @@
-import AbstractVariable;
+module cassowary.DummyVariable;
+
+import cassowary.AbstractVariable;
 
 class ClDummyVariable : ClAbstractVariable
 {

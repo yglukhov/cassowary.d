@@ -1,3 +1,5 @@
+module cassowary.SymbolicWeight;
+
 import std.conv;
 
 public class ClSymbolicWeight

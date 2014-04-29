@@ -1,7 +1,9 @@
-import Constraint;
-import Variable;
-import Strength;
-import LinearExpression;
+module cassowary.EditOrStayConstraint;
+
+import cassowary.Constraint;
+import cassowary.Variable;
+import cassowary.Strength;
+import cassowary.LinearExpression;
 
 abstract class ClEditOrStayConstraint : ClConstraint
 {

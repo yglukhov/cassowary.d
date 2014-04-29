@@ -1,3 +1,5 @@
+module cassowary.Error;
+
 public class ClError : Exception
 {
 	this()

@@ -1,7 +1,9 @@
-import LinearConstraint;
-import LinearExpression;
-import Strength;
-import AbstractVariable;
+module cassowary.LinearEquation;
+
+import cassowary.LinearConstraint;
+import cassowary.LinearExpression;
+import cassowary.Strength;
+import cassowary.AbstractVariable;
 
 class ClLinearEquation : ClLinearConstraint
 {

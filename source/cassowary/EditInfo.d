@@ -1,5 +1,7 @@
-import Constraint;
-import SlackVariable;
+module cassowary.EditInfo;
+
+import cassowary.Constraint;
+import cassowary.SlackVariable;
 
 class ClEditInfo
 {

@@ -1,5 +1,7 @@
+module cassowary.Point;
+
 import std.conv;
-import Variable;
+import cassowary.Variable;
 
 class ClPoint
 {

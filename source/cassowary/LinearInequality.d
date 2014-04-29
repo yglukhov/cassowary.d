@@ -1,9 +1,11 @@
-import LinearConstraint;
-import LinearExpression;
-import Strength;
-import Variable;
-import AbstractVariable;
-import Error;
+module cassowary.LinearInequality;
+
+import cassowary.LinearConstraint;
+import cassowary.LinearExpression;
+import cassowary.Strength;
+import cassowary.Variable;
+import cassowary.AbstractVariable;
+import cassowary.Error;
 
 enum InequalityType
 {
