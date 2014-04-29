@@ -6,5 +6,6 @@
 	"dependencies": {
 	},
 
-	"targetType": "library"
+	"targetType": "library",
+	"license": "LGPL"
 }
