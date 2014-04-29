@@ -1,17 +1,12 @@
-cassowary.d
-===========
+#! /usr/bin/env rdmd -debug -unittest -main
 
-Cassowary constraint solving library for D language.
-
-This is a port of Java version of http://www.cs.washington.edu/research/constraints/cassowary/
-
-This is a work in progress. Syntax sugar like arithmetic operations for expressions is going to
-be added later on.
-
-Usage:
-```d
 import std.stdio;
-import cassowary.d;
+public import SimplexSolver;
+public import Variable;
+public import LinearConstraint;
+public import LinearEquation;
+public import LinearExpression;
+
 
 unittest
 {
@@ -25,4 +20,3 @@ unittest
 	solver.solve();
 	writeln("A: ", a.value(), " B: ", b.value());
 }
-```
