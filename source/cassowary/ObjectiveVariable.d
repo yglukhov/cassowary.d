@@ -6,13 +6,13 @@ class ClObjectiveVariable : ClAbstractVariable
 	{
 		super(name);
 	}
+
 	this(long number, string prefix)
 	{
 		super(number, prefix);
 	}
 
 	override string toString()
-	//    { return "[" + name() + ":obj:" + hashCode() + "]"; }
 	{
 		return "[" ~ name ~ ":obj]";
 	}

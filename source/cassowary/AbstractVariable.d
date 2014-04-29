@@ -1,6 +1,8 @@
 import std.conv;
 
-public abstract class ClAbstractVariable
+import LinearExpression;
+
+abstract class ClAbstractVariable
 {
 	this(string theName)
 	{
@@ -9,45 +11,39 @@ public abstract class ClAbstractVariable
 		iVariableNumber++;
 	}
 
-	public this()
+	this()
 	{
 		//hash_code = iVariableNumber;
 		name = "v" ~ iVariableNumber.to!string();
 		iVariableNumber++;
 	}
 
-	public this(long varnumber, string prefix)
+	this(long varnumber, string prefix)
 	{
 		//hash_code = iVariableNumber;
 		name = prefix ~ varnumber.to!string();
 		iVariableNumber++;
 	}
 
-	public bool isDummy()
+	bool isDummy()
 	{
 		return false;
 	}
 
-	public abstract bool isExternal();
+	abstract bool isExternal();
 
-	public abstract bool isPivotable();
+	abstract bool isPivotable();
 
-	public abstract bool isRestricted();
+	abstract bool isRestricted();
 
-	public abstract override string toString();
+	abstract override string toString();
 
-	public static int numCreated()
+	static int numCreated()
 	{
 		return iVariableNumber;
 	}
 
-	// for debugging
-	//  public final int hashCode() { return hash_code; }
-
 	string name;
-
-	// for debugging
-	// private int hash_code;
 
 	private static int iVariableNumber;
 }

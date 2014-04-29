@@ -1,5 +1,6 @@
 import std.stdio;
 import std.conv;
+import std.math;
 
 import AbstractVariable;
 import Variable;
@@ -7,14 +8,11 @@ import Tableau;
 import Cl;
 import Error;
 
-public class ClLinearExpression
+class ClLinearExpression
 {
 	this(ClAbstractVariable clv, double value, double constant)
 	{
-		if (CL.fGC) writeln("new ClLinearExpression");
-
 		_constant = constant;
-		//  _terms = new typeof(_terms)();
 		if (clv !is null)
 			_terms[clv] = value;
 	}
@@ -43,14 +41,12 @@ public class ClLinearExpression
 	// for use by the clone method
 	protected this(double constant, double[ClAbstractVariable] terms)
 	{
-		if (CL.fGC)
-			writeln("clone ClLinearExpression");
 		_constant = constant;
 		_terms = terms.dup;
 	}
 
 
-	public ClLinearExpression multiplyMe(double x)
+	ClLinearExpression multiplyMe(double x)
 	{
 		_constant *= x;
 
@@ -61,17 +57,32 @@ public class ClLinearExpression
 		return this;
 	}
 
-	public final Object clone()
+	final Object clone()
 	{
 		return new ClLinearExpression(_constant, _terms);
 	}
 
-	public final ClLinearExpression times(double x)
+	ClLinearExpression opBinary(string op, T) (T expr)
+	{
+		static if (op == "+")
+			return plus(expr);
+		else
+			static if (op == "-")
+				return minus(expr);
+			else
+				static if (op == "*")
+					return times(expr);
+				else
+					static if (op == "/")
+						return divide(expr);
+	}
+
+	final ClLinearExpression times(double x)
 	{
 		return (cast(ClLinearExpression) clone()).multiplyMe(x);
 	}
 
-	public final ClLinearExpression times(ClLinearExpression expr)
+	final ClLinearExpression times(ClLinearExpression expr)
 	{
 		if (isConstant())
 		{
@@ -84,37 +95,49 @@ public class ClLinearExpression
 		return times(expr._constant);
 	}
 
-	public final ClLinearExpression plus(ClLinearExpression expr)
+	final ClLinearExpression plus(double c)
+	{
+		ClLinearExpression result = cast(ClLinearExpression) clone();
+		result._constant += c;
+		return result;
+	}
+
+	final ClLinearExpression plus(ClLinearExpression expr)
 	{
 		return (cast(ClLinearExpression) clone()).addExpression(expr, 1.0);
 	}
 
-	public final ClLinearExpression plus(ClVariable var)
+	final ClLinearExpression plus(ClVariable var)
 	{
 		return (cast(ClLinearExpression) clone()).addVariable(var, 1.0);
 	}
 
-	public final ClLinearExpression minus(ClLinearExpression expr)
+	final ClLinearExpression minus(double c)
+	{
+		return plus(-c);
+	}
+
+	final ClLinearExpression minus(ClLinearExpression expr)
 	{
 		return (cast(ClLinearExpression) clone()).addExpression(expr, -1.0);
 	}
 
-	public final ClLinearExpression minus(ClVariable var)
+	final ClLinearExpression minus(ClVariable var)
 	{
 		return (cast(ClLinearExpression) clone()).addVariable(var, -1.0);
 	}
 
 
-	public final ClLinearExpression divide(double x)
+	final ClLinearExpression divide(double x)
 	{
-		if (CL.approx(x, 0.0))
+		if (approxEqual(x, 0.0))
 		{
 			throw new ClErrorNonlinearExpression();
 		}
 		return times(1.0/x);
 	}
 
-	public final ClLinearExpression divide(ClLinearExpression expr)
+	final ClLinearExpression divide(ClLinearExpression expr)
 	{
 		if (!expr.isConstant())
 		{
@@ -123,16 +146,16 @@ public class ClLinearExpression
 		return divide(expr._constant);
 	}
 
-	public final ClLinearExpression divFrom(ClLinearExpression expr)
+	final ClLinearExpression divFrom(ClLinearExpression expr)
 	{
-		if (!isConstant() || CL.approx(_constant, 0.0))
+		if (!isConstant() || approxEqual(_constant, 0.0))
 		{
 			throw new ClErrorNonlinearExpression();
 		}
 		return expr.divide(_constant);
 	}
 
-	public final ClLinearExpression subtractFrom(ClLinearExpression expr)
+	final ClLinearExpression subtractFrom(ClLinearExpression expr)
 	{
 		return expr.minus( this);
 	}
@@ -140,9 +163,9 @@ public class ClLinearExpression
 	// Add n*expr to this expression from another expression expr.
 	// Notify the solver if a variable is added or deleted from this
 	// expression.
-	public final ClLinearExpression addExpression(ClLinearExpression expr, double n,
-												  ClAbstractVariable subject,
-												  ClTableau solver)
+	final ClLinearExpression addExpression(ClLinearExpression expr, double n,
+										   ClAbstractVariable subject,
+										   ClTableau solver)
 	{
 		incrementConstant(n * expr.constant());
 
@@ -154,7 +177,7 @@ public class ClLinearExpression
 	}
 
 	// Add n*expr to this expression from another expression expr.
-	public final ClLinearExpression addExpression(ClLinearExpression expr, double n)
+	final ClLinearExpression addExpression(ClLinearExpression expr, double n)
 	{
 		incrementConstant(n * expr.constant());
 
@@ -166,7 +189,7 @@ public class ClLinearExpression
 		return this;
 	}
 
-	public final ClLinearExpression addExpression(ClLinearExpression expr)
+	final ClLinearExpression addExpression(ClLinearExpression expr)
 	{
 		return addExpression(expr, 1.0);
 	}
@@ -174,7 +197,7 @@ public class ClLinearExpression
 	// Add a term c*v to this expression.  If the expression already
 	// contains a term involving v, add c to the existing coefficient.
 	// If the new coefficient is approximately 0, delete v.
-	public final ClLinearExpression addVariable(ClAbstractVariable v, double c)
+	final ClLinearExpression addVariable(ClAbstractVariable v, double c)
 	{ // body largely duplicated below
 		if (CL.fTraceOn) CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string());
 
@@ -182,7 +205,7 @@ public class ClLinearExpression
 		if (coeff !is null)
 		{
 			double new_coefficient = *coeff + c;
-			if (CL.approx(new_coefficient, 0.0))
+			if (approxEqual(new_coefficient, 0.0))
 			{
 				_terms.remove(v);
 			}
@@ -191,20 +214,20 @@ public class ClLinearExpression
 				*coeff = new_coefficient;
 			}
 		}
-		else if (!CL.approx(c, 0.0))
+		else if (!approxEqual(c, 0.0))
 		{
 			_terms[v] = c;
 		}
 		return this;
 	}
 
-	public final ClLinearExpression addVariable(ClAbstractVariable v)
+	final ClLinearExpression addVariable(ClAbstractVariable v)
 	{
 		return addVariable(v, 1.0);
 	}
 
 
-	public final ClLinearExpression setVariable(ClAbstractVariable v, double c)
+	final ClLinearExpression setVariable(ClAbstractVariable v, double c)
 	{
 		//assert(c != 0.0);
 		_terms[v] = c;
@@ -215,8 +238,8 @@ public class ClLinearExpression
 	// contains a term involving v, add c to the existing coefficient.
 	// If the new coefficient is approximately 0, delete v.  Notify the
 	// solver if v appears or disappears from this expression.
-	public final ClLinearExpression addVariable(ClAbstractVariable v, double c,
-												ClAbstractVariable subject, ClTableau solver)
+	final ClLinearExpression addVariable(ClAbstractVariable v, double c,
+										 ClAbstractVariable subject, ClTableau solver)
 	{  // body largely duplicated above
 		if (CL.fTraceOn) CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string() ~ ", " ~ subject.toString() ~ ", ...");
 
@@ -224,7 +247,7 @@ public class ClLinearExpression
 		if (coeff !is null)
 		{
 			double new_coefficient = *coeff + c;
-			if (CL.approx(new_coefficient, 0.0))
+			if (approxEqual(new_coefficient, 0.0))
 			{
 				solver.noteRemovedVariable(v, subject);
 				_terms.remove(v);
@@ -236,7 +259,7 @@ public class ClLinearExpression
 		}
 		else
 		{
-			if (!CL.approx(c, 0.0))
+			if (!approxEqual(c, 0.0))
 			{
 				_terms[v] = c;
 				solver.noteAddedVariable(v, subject);
@@ -248,7 +271,7 @@ public class ClLinearExpression
 	// Return a pivotable variable in this expression.  (It is an error
 	// if this expression is constant -- signal ClErrorInternal in
 	// that case).  Return null if no pivotable variables
-	public final ClAbstractVariable anyPivotableVariable()
+	final ClAbstractVariable anyPivotableVariable()
 	{
 		if (isConstant())
 		{
@@ -272,8 +295,8 @@ public class ClLinearExpression
 	// because it now has a coefficient of 0, inform the solver.
 	// PRECONDITIONS:
 	//   var occurs with a non-zero coefficient in this expression.
-	public final void substituteOut(ClAbstractVariable var, ClLinearExpression expr,
-									ClAbstractVariable subject, ClTableau solver)
+	final void substituteOut(ClAbstractVariable var, ClLinearExpression expr,
+							 ClAbstractVariable subject, ClTableau solver)
 	{
 		if (CL.fTraceOn) CL.fnenterprint("CLE:substituteOut: " ~ var.toString() ~ ", " ~ expr.toString() ~ ", " ~ subject.toString() ~ ", ...");
 		if (CL.fTraceOn) CL.traceprint("this = " ~ this.toString());
@@ -289,7 +312,7 @@ public class ClLinearExpression
 			{
 				double old_coeff = *d_old_coeff;
 				double newCoeff = old_coeff + multiplier * coeff;
-				if (CL.approx(newCoeff, 0.0))
+				if (approxEqual(newCoeff, 0.0))
 				{
 					solver.noteRemovedVariable(clv, subject);
 					_terms.remove(clv);
@@ -324,7 +347,7 @@ public class ClLinearExpression
 	//   The new equation will be
 	//        newSubject = -c/a + oldSubject/a - (a1/a)*v1 - ... - (an/a)*vn.
 	//   Note that the term involving newSubject has been dropped.
-	public final void changeSubject(ClAbstractVariable old_subject, ClAbstractVariable new_subject)
+	final void changeSubject(ClAbstractVariable old_subject, ClAbstractVariable new_subject)
 	{
 		_terms[old_subject] = newSubject(new_subject);
 	}
@@ -345,7 +368,7 @@ public class ClLinearExpression
 	//
 	// Note that the term involving subject has been dropped.
 	// Returns the reciprocal, so changeSubject can use it, too
-	public final double newSubject(ClAbstractVariable subject)
+	final double newSubject(ClAbstractVariable subject)
 	{
 		if (CL.fTraceOn) CL.fnenterprint("newSubject:" ~ subject.toString());
 		double coeff = _terms[subject];
@@ -357,42 +380,42 @@ public class ClLinearExpression
 	// Return the coefficient corresponding to variable var, i.e.,
 	// the 'ci' corresponding to the 'vi' that var is:
 	//     v1*c1 + v2*c2 + .. + vn*cn + c
-	public final double coefficientFor(ClAbstractVariable var)
+	final double coefficientFor(ClAbstractVariable var)
 	{
 		double* coeff = var in _terms;
 		return (coeff is null) ? 0.0 : *coeff;
 	}
 
-	public final double constant()
+	final double constant()
 	{
 		return _constant;
 	}
 
-	public final void set_constant(double c)
+	final void set_constant(double c)
 	{
 		_constant = c;
 	}
 
-	public final auto terms()
+	final auto terms()
 	{
 		return _terms;
 	}
 
-	public final void incrementConstant(double c)
+	final void incrementConstant(double c)
 	{
 		_constant += c;
 	}
 
-	public final bool isConstant()
+	final bool isConstant()
 	{
 		return _terms.length() == 0;
 	}
 
-	public override string toString()
+	override string toString()
 	{
 		string res = "";
 
-		if (!CL.approx(_constant, 0.0) || _terms.length() == 0)
+		if (!approxEqual(_constant, 0.0) || _terms.length() == 0)
 		{
 			res ~= _constant.to!string();
 		}
@@ -408,31 +431,31 @@ public class ClLinearExpression
 		return res;
 	}
 
-	public final static ClLinearExpression Plus(ClLinearExpression e1, ClLinearExpression e2)
+	final static ClLinearExpression Plus(ClLinearExpression e1, ClLinearExpression e2)
 	{
 		return e1.plus(e2);
 	}
 
-	public final static ClLinearExpression Minus(ClLinearExpression e1, ClLinearExpression e2)
+	final static ClLinearExpression Minus(ClLinearExpression e1, ClLinearExpression e2)
 	{
 		return e1.minus(e2);
 	}
 
-	public final static ClLinearExpression Times(ClLinearExpression e1, ClLinearExpression e2)
+	final static ClLinearExpression Times(ClLinearExpression e1, ClLinearExpression e2)
 	{
 		return e1.times(e2);
 	}
 
-	public final static ClLinearExpression Divide(ClLinearExpression e1, ClLinearExpression e2)
+	final static ClLinearExpression Divide(ClLinearExpression e1, ClLinearExpression e2)
 	{
 		return e1.divide(e2);
 	}
 
-	public final static bool FEquals(ClLinearExpression e1, ClLinearExpression e2)
+	final static bool FEquals(ClLinearExpression e1, ClLinearExpression e2)
 	{
 		return e1 == e2;
 	}
 
 	private double _constant;
-	private double[ClAbstractVariable] _terms; // from ClVariable to ClDouble
+	private double[ClAbstractVariable] _terms;
 }

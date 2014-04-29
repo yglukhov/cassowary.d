@@ -1,5 +1,6 @@
 import std.conv;
 import AbstractVariable;
+import LinearExpression;
 
 class ClVariable : ClAbstractVariable
 {
@@ -40,39 +41,39 @@ class ClVariable : ClAbstractVariable
 		_value = 0.0;
 	}
 
-	public override bool isDummy()
+	override bool isDummy()
 	{
 		return false;
 	}
 
-	public override bool isExternal()
+	override bool isExternal()
 	{
 		return true;
 	}
 
-	public override bool isPivotable()
+	override bool isPivotable()
 	{
 		return false;
 	}
 
-	public override bool isRestricted()
+	override bool isRestricted()
 	{
 		return false;
 	}
 
-	public override string toString()
+	override string toString()
 	{
 		return "[" ~ name ~ ":" ~ _value.to!string() ~ "]";
 	}
 
 	// change the value held -- should *not* use this if the variable is
 	// in a solver -- instead use addEditVar() and suggestValue() interface
-	public final double value()
+	final double value()
 	{
 		return _value;
 	}
 
-	public final void set_value(double value)
+	final void set_value(double value)
 	{
 		_value = value;
 	}
@@ -81,14 +82,56 @@ class ClVariable : ClAbstractVariable
 	// done when the value is changed by the solver
 	// may be called when the value hasn't actually changed -- just
 	// means the solver is setting the external variable
-	public void change_value(double value)
+	void change_value(double value)
 	{
 		_value = value;
 	}
 
+
+	ClLinearExpression opBinary(string op) (double arg)
+	{
+		static if (op == "+")
+			return new ClLinearExpression(this, 1, arg);
+		else
+			static if (op == "-")
+				return new ClLinearExpression(this, 1, -arg);
+			else
+				static if (op == "*")
+					return new ClLinearExpression(this, arg, 0);
+				else
+					static if (op == "/")
+						return new ClLinearExpression(this, 1.0 / arg, 0);
+	}
+
+	ClLinearExpression opBinaryRight(string op) (double arg)
+	{
+		static if (op == "+")
+			return new ClLinearExpression(this, 1, arg);
+		else
+			static if (op == "-")
+				return new ClLinearExpression(this, -1, arg);
+			else
+				static if (op == "*")
+					return new ClLinearExpression(this, arg, 0);
+	}
+
+	ClLinearExpression opBinary(string op) (ClVariable arg)
+	{
+		static if (op == "+")
+			return (new ClLinearExpression(this)).plus(arg);
+		else
+			static if (op == "-")
+				return (new ClLinearExpression(this)).minus(arg);
+			else
+				static if (op == "*")
+					return new ClLinearExpression(this).times(arg);
+				else
+					static if (op == "/")
+						return new ClLinearExpression(this).divide(arg);
+	}
+
+
 	Object attachedObject;
-
 	static ClVariable[string] varMap;
-
 	private double _value;
 }

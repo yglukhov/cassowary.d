@@ -1,6 +1,7 @@
 import std.array;
 import std.conv;
 import std.stdio;
+import std.math;
 
 import Tableau;
 import AbstractVariable;
@@ -48,14 +49,14 @@ class ClSimplexSolver : ClTableau
 	// Convenience function for creating a linear inequality constraint
 	final ClSimplexSolver addLowerBound(ClAbstractVariable v, double lower)
 	{
-		ClLinearInequality cn = new ClLinearInequality(v, CL.GEQ, new ClLinearExpression(lower));
+		ClLinearInequality cn = new ClLinearInequality(v, InequalityType.GEQ, new ClLinearExpression(lower));
 		return addConstraint(cn);
 	}
 
 	// Convenience function for creating a linear inequality constraint
 	final ClSimplexSolver addUpperBound(ClAbstractVariable v, double upper)
 	{
-		ClLinearInequality cn = new ClLinearInequality(v, CL.LEQ, new ClLinearExpression(upper));
+		ClLinearInequality cn = new ClLinearInequality(v, InequalityType.LEQ, new ClLinearExpression(upper));
 		return addConstraint(cn);
 	}
 
@@ -73,8 +74,7 @@ class ClSimplexSolver : ClTableau
 		ClAbstractVariable[] eplus_eminus;
 		double prevEConstant = 0;
 		ClLinearExpression expr = newExpression(cn,         /* output to: */
-												eplus_eminus,
-												prevEConstant);
+												eplus_eminus, prevEConstant);
 		bool fAddedOkDirectly = false;
 
 		try
@@ -579,7 +579,7 @@ class ClSimplexSolver : ClTableau
 			return this;
 		}
 
-		if (!CL.approx(n, v.value()))
+		if (!approxEqual(n, v.value()))
 		{
 			addEditVar(v);
 			beginEdit();
@@ -682,7 +682,7 @@ class ClSimplexSolver : ClTableau
 
 		if (fTraceOn) traceprint("azTableauRow.constant() == " ~ azTableauRow.constant().to!string());
 
-		if (!CL.approx(azTableauRow.constant(), 0.0))
+		if (!approxEqual(azTableauRow.constant(), 0.0))
 		{
 			removeRow(az);
 			removeColumn(av);
@@ -814,7 +814,7 @@ class ClSimplexSolver : ClTableau
 			}
 		}
 
-		if (!CL.approx(expr.constant(), 0.0))
+		if (!approxEqual(expr.constant(), 0.0))
 		{
 			throw new ClErrorRequiredFailure();
 		}
