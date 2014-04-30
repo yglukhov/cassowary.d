@@ -7,23 +7,23 @@ class CL
 	enum fDebugOn = false;
 	enum fTraceOn = false;
 
-	static void debugprint(string s)
+	static void debugprint(lazy string s)
 	{
-		writeln(s);
+		if (fTraceOn) writeln(s);
 	}
 
-	static void traceprint(string s)
+	static void traceprint(lazy string s)
 	{
-		writeln(s);
+		if (fTraceOn) writeln(s);
 	}
 
-	static void fnenterprint(string s)
+	static void fnenterprint(lazy string s)
 	{
-		writeln("* " ~ s);
+		if (fTraceOn) writeln("* " ~ s);
 	}
 
-	static void fnexitprint(string s)
+	static void fnexitprint(lazy string s)
 	{
-		writeln("- " ~ s);
+		if (fTraceOn) writeln("- " ~ s);
 	}
 }

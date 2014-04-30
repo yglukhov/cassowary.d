@@ -43,34 +43,34 @@ class ClVariable : ClAbstractVariable
 		_value = 0.0;
 	}
 
-	override bool isDummy()
+	override bool isDummy() const
 	{
 		return false;
 	}
 
-	override bool isExternal()
+	override bool isExternal() const
 	{
 		return true;
 	}
 
-	override bool isPivotable()
+	override bool isPivotable() const
 	{
 		return false;
 	}
 
-	override bool isRestricted()
+	override bool isRestricted() const
 	{
 		return false;
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		return "[" ~ name ~ ":" ~ _value.to!string() ~ "]";
 	}
 
 	// change the value held -- should *not* use this if the variable is
 	// in a solver -- instead use addEditVar() and suggestValue() interface
-	final double value()
+	final double value() const
 	{
 		return _value;
 	}
@@ -131,7 +131,6 @@ class ClVariable : ClAbstractVariable
 					static if (op == "/")
 						return new ClLinearExpression(this).divide(arg);
 	}
-
 
 	Object attachedObject;
 	static ClVariable[string] varMap;

@@ -2,54 +2,57 @@ module cassowary.Strength;
 
 import cassowary.SymbolicWeight;
 
-public class ClStrength
+class ClStrength
 {
-	this(string name, ClSymbolicWeight symbolicWeight)
-	{  _name = name;    _symbolicWeight = symbolicWeight; }
+	this(string name, ClSymbolicWeight symbolicWeight) pure @safe nothrow
+	{
+		_name = name;
+		_symbolicWeight = symbolicWeight;
+	}
 
-	this(string name, double w1, double w2, double w3)
+	this(string name, double w1, double w2, double w3) pure @safe nothrow
 	{
 		_name = name;
 		_symbolicWeight = new ClSymbolicWeight(w1, w2, w3);
 	}
 
-	public bool isRequired()
+	bool isRequired() const
 	{
 		return (required == this);
 	}
 
-	public override string toString()
+	override string toString() const
 	{
-		return name () ~(!isRequired() ? (":" ~ symbolicWeight().toString()) : "");
+		return name () ~(!isRequired() ? (":" ~ _symbolicWeight.toString()) : "");
 	}
 
-	public ClSymbolicWeight symbolicWeight()
+	ClSymbolicWeight symbolicWeight()
 	{
 		return _symbolicWeight;
 	}
 
-	public string name()
+	string name() const
 	{
 		return _name;
 	}
 
-	public void set_name(string name)
+	void set_name(string name)
 	{
 		_name = name;
 	}
 
-	public void set_symbolicWeight(ClSymbolicWeight symbolicWeight)
+	void set_symbolicWeight(ClSymbolicWeight symbolicWeight)
 	{
 		_symbolicWeight = symbolicWeight;
 	}
 
-	public static ClStrength required;
+	static ClStrength required;
 
-	public static ClStrength strong;
+	static ClStrength strong;
 
-	public static ClStrength medium;
+	static ClStrength medium;
 
-	public static ClStrength weak;
+	static ClStrength weak;
 
 	static this()
 	{

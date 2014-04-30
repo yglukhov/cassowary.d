@@ -36,12 +36,14 @@ class ClPoint
 	// use only before adding into the solver
 	void SetXY(double x, double y)
 	{
-		_clv_x.set_value(x); _clv_y.set_value(y);
+		_clv_x.set_value(x);
+		_clv_y.set_value(y);
 	}
 
 	void SetXY(ClVariable clv_x, ClVariable clv_y)
 	{
-		_clv_x = clv_x; _clv_y = clv_y;
+		_clv_x = clv_x;
+		_clv_y = clv_y;
 	}
 
 	double Xvalue()

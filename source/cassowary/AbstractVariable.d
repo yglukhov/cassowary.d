@@ -26,18 +26,18 @@ abstract class ClAbstractVariable
 		iVariableNumber++;
 	}
 
-	bool isDummy()
+	bool isDummy() const
 	{
 		return false;
 	}
 
-	abstract bool isExternal();
+	abstract bool isExternal() const;
 
-	abstract bool isPivotable();
+	abstract bool isPivotable() const;
 
-	abstract bool isRestricted();
+	abstract bool isRestricted() const;
 
-	abstract override string toString();
+	abstract override string toString() const;
 
 	static int numCreated()
 	{

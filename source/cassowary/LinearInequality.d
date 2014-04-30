@@ -186,12 +186,12 @@ class ClLinearInequality : ClLinearConstraint
 	}
 
 
-	override bool isInequality()
+	override bool isInequality() const
 	{
 		return true;
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		return super.toString() ~ " >= 0 )";
 	}

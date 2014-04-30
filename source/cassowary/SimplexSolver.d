@@ -45,7 +45,7 @@ class ClSimplexSolver : ClTableau
 		_rows[_objective] = e;
 		_stkCedcns = [0];
 
-		if (fTraceOn) traceprint("objective expr == " ~ rowExpression(_objective).toString());
+		traceprint("objective expr == " ~ rowExpression(_objective).toString());
 	}
 
 	// Convenience function for creating a linear inequality constraint
@@ -71,7 +71,7 @@ class ClSimplexSolver : ClTableau
 	// Add constraint "cn" to the solver
 	final ClSimplexSolver addConstraint(ClConstraint cn)
 	{
-		if (fTraceOn) fnenterprint("addConstraint: " ~ cn.toString());
+		fnenterprint("addConstraint: " ~ cn.toString());
 
 		ClAbstractVariable[] eplus_eminus;
 		double prevEConstant = 0;
@@ -103,7 +103,7 @@ class ClSimplexSolver : ClTableau
 
 		if (cn.isEditConstraint())
 		{
-			auto i = _editVarMap.length();
+			auto i = _editVarMap.length;
 			ClEditConstraint cnEdit = cast(ClEditConstraint) cn;
 			ClSlackVariable clvEplus = cast(ClSlackVariable) eplus_eminus[0];
 			ClSlackVariable clvEminus = cast(ClSlackVariable) eplus_eminus[1];
@@ -126,7 +126,7 @@ class ClSimplexSolver : ClTableau
 	// resulted in an unsolvable system (instead of throwing an exception)
 	final bool addConstraintNoException(ClConstraint cn)
 	{
-		if (fTraceOn) fnenterprint("addConstraintNoException: " ~ cn.toString());
+		fnenterprint("addConstraintNoException: " ~ cn.toString());
 
 		try
 		{
@@ -173,11 +173,11 @@ class ClSimplexSolver : ClTableau
 	// resolve() messages, after adding the appropriate edit variables
 	final ClSimplexSolver beginEdit()
 	{
-		assert(_editVarMap.length() > 0, "_editVarMap.length() > 0");
+		assert(_editVarMap.length > 0, "_editVarMap.length() > 0");
 		// may later want to do more in here
 		_infeasibleRows.clear();
 		resetStayConstants();
-		_stkCedcns ~= cast(int) _editVarMap.length();
+		_stkCedcns ~= cast(int) _editVarMap.length;
 		return this;
 	}
 
@@ -185,7 +185,7 @@ class ClSimplexSolver : ClTableau
 	// for now, it just removes all edit variables
 	final ClSimplexSolver endEdit()
 	{
-		assert(_editVarMap.length() > 0, "_editVarMap.length() > 0");
+		assert(_editVarMap.length > 0, "_editVarMap.length() > 0");
 		resolve();
 		_stkCedcns.popBack();
 		int n = _stkCedcns[$-1];
@@ -213,7 +213,7 @@ class ClSimplexSolver : ClTableau
 					removeEditVar(v);
 				}
 			}
-			assert(_editVarMap.length() == n, "_editVarMap.length() == n");
+			assert(_editVarMap.length == n, "_editVarMap.length() == n");
 
 			return this;
 		}
@@ -230,7 +230,7 @@ class ClSimplexSolver : ClTableau
 	// the y stay on another.
 	final ClSimplexSolver addPointStays(ClPoint[] listOfPoints)
 	{
-		if (fTraceOn) fnenterprint("addPointStays" ~ listOfPoints.to!string());
+		fnenterprint("addPointStays" ~ listOfPoints.to!string());
 		double weight = 1.0;
 		double multiplier = 2.0;
 		foreach(p; listOfPoints)
@@ -293,8 +293,8 @@ class ClSimplexSolver : ClTableau
 	// Also remove any error variable associated with cn
 	final ClSimplexSolver removeConstraint(ClConstraint cn)
 	{
-		if (fTraceOn) fnenterprint("removeConstraint: " ~ cn.toString());
-		if (fTraceOn) traceprint(this.toString());
+		fnenterprint("removeConstraint: " ~ cn.toString());
+		traceprint(this.toString());
 
 		_fNeedsSolving = true;
 
@@ -303,11 +303,11 @@ class ClSimplexSolver : ClTableau
 		ClLinearExpression zRow = rowExpression(_objective);
 
 		auto eVars = _errorVars.get(cn, null);
-		if (fTraceOn) traceprint("eVars == " ~ eVars.to!string());
+		traceprint("eVars == " ~ eVars.to!string());
 
 		if (eVars !is null)
 		{
-			foreach(ClAbstractVariable clv; eVars.elements())
+			foreach(ClAbstractVariable clv; eVars)
 			{
 				ClLinearExpression expr = rowExpression(clv);
 				if (expr is null )
@@ -334,24 +334,24 @@ class ClSimplexSolver : ClTableau
 
 		_markerVars.remove(cn);
 
-		if (fTraceOn) traceprint("Looking to remove var " ~ marker.toString());
+		traceprint("Looking to remove var " ~ marker.toString());
 
 		if (rowExpression(marker) is null )
 		{
 			// not in the basis, so need to do some work
 			auto col = _columns[marker];
 
-			if (fTraceOn) traceprint("Must pivot -- columns are " ~ col.toString());
+			traceprint("Must pivot -- columns are " ~ col.toString());
 
 			ClAbstractVariable exitVar = null;
 			double minRatio = 0.0;
-			foreach(ClAbstractVariable v; col.elements())
+			foreach(ClAbstractVariable v; col)
 			{
 				if (v.isRestricted() )
 				{
 					ClLinearExpression expr = rowExpression( v);
 					double coeff = expr.coefficientFor(marker);
-					if (fTraceOn) traceprint("Marker " ~ marker.to!string() ~ "'s coefficient in " ~ expr.toString() ~ " is " ~ coeff.to!string());
+					traceprint("Marker " ~ marker.to!string() ~ "'s coefficient in " ~ expr.toString() ~ " is " ~ coeff.to!string());
 					if (coeff < 0.0)
 					{
 						double r = -expr.constant() / coeff;
@@ -365,8 +365,8 @@ class ClSimplexSolver : ClTableau
 			}
 			if (exitVar is null )
 			{
-				if (fTraceOn) traceprint("exitVar is still null");
-				foreach (ClAbstractVariable v; col.elements())
+				traceprint("exitVar is still null");
+				foreach (ClAbstractVariable v; col)
 				{
 					if (v.isRestricted() )
 					{
@@ -385,13 +385,13 @@ class ClSimplexSolver : ClTableau
 			if (exitVar is null)
 			{
 				// exitVar is still null
-				if (col.size() == 0)
+				if (col.length == 0)
 				{
 					removeColumn(marker);
 				}
 				else
 				{
-					exitVar = col.elements()[0];
+					exitVar = col.anyElement;
 				}
 			}
 
@@ -409,7 +409,7 @@ class ClSimplexSolver : ClTableau
 
 		if (eVars !is null)
 		{
-			foreach(ClAbstractVariable v; eVars.elements())
+			foreach(ClAbstractVariable v; eVars)
 			{
 				// FIXGJBNOW != or equals?
 				if ( v != marker )
@@ -465,7 +465,7 @@ class ClSimplexSolver : ClTableau
 	// haven't definitely observed any such problems yet)
 	final void reset()
 	{
-		if (fTraceOn) fnenterprint("reset");
+		fnenterprint("reset");
 		throw new ClErrorInternal("reset not implemented");
 	}
 
@@ -479,7 +479,7 @@ class ClSimplexSolver : ClTableau
 	// in the ClEditInfo objects)
 	final void resolve(double[] newEditConstants)
 	{
-		if (fTraceOn) fnenterprint("resolve" ~ newEditConstants.to!string());
+		fnenterprint("resolve" ~ newEditConstants.to!string());
 		foreach(ClVariable v, ClEditInfo cei; _editVarMap)
 		{
 			int i = cei.Index();
@@ -509,7 +509,7 @@ class ClSimplexSolver : ClTableau
 	// suggested (see suggestValue() method)
 	final void resolve()
 	{
-		if (fTraceOn) fnenterprint("resolve()");
+		fnenterprint("resolve()");
 		dualOptimize();
 		setExternalVariables();
 		_infeasibleRows.clear();
@@ -523,7 +523,7 @@ class ClSimplexSolver : ClTableau
 	// after resolve() has been called
 	final ClSimplexSolver suggestValue(ClVariable v, double x)
 	{
-		if (fTraceOn) fnenterprint("suggestValue(" ~ v.toString() ~ ", " ~ x.to!string() ~ ")");
+		fnenterprint("suggestValue(" ~ v.toString() ~ ", " ~ x.to!string() ~ ")");
 		ClEditInfo cei = _editVarMap.get(v, null);
 		if (cei is null)
 		{
@@ -551,7 +551,8 @@ class ClSimplexSolver : ClTableau
 	// with 126 failed adds)
 	final ClSimplexSolver setAutosolve(bool f)
 	{
-		_fOptimizeAutomatically = f; return this;
+		_fOptimizeAutomatically = f;
+		return this;
 	}
 
 	// Tell whether we are autosolving
@@ -617,7 +618,7 @@ class ClSimplexSolver : ClTableau
 				// cannot have a required failure, since we add w/ weak
 				throw new ClErrorInternal("Error in addVar -- required failure is impossible");
 			}
-			if (fTraceOn) { traceprint("added initial stay on " ~ v.toString()); }
+			traceprint("added initial stay on " ~ v.toString());
 		}
 		return this;
 	}
@@ -666,23 +667,23 @@ class ClSimplexSolver : ClTableau
 	// (Raise an exception if we can't attain av=0.)
 	protected final void addWithArtificialVariable(ClLinearExpression expr)
 	{
-		if (fTraceOn) fnenterprint("addWithArtificialVariable: " ~ expr.toString());
+		fnenterprint("addWithArtificialVariable: " ~ expr.toString());
 
 		ClSlackVariable av = new ClSlackVariable(++_artificialCounter, "a");
 		ClObjectiveVariable az = new ClObjectiveVariable("az");
 		ClLinearExpression azRow = cast(ClLinearExpression) expr.clone();
 
-		if (fTraceOn) traceprint("before addRows:\n" ~ toString());
+		traceprint("before addRows:\n" ~ toString());
 
 		addRow( az, azRow);
 		addRow( av, expr);
 
-		if (fTraceOn) traceprint("after addRows:\n" ~ toString());
+		traceprint("after addRows:\n" ~ toString());
 		optimize(az);
 
 		ClLinearExpression azTableauRow = rowExpression(az);
 
-		if (fTraceOn) traceprint("azTableauRow.constant() == " ~ azTableauRow.constant().to!string());
+		traceprint("azTableauRow.constant() == " ~ azTableauRow.constant().to!string());
 
 		if (!approxEqual(azTableauRow.constant(), 0.0))
 		{
@@ -721,11 +722,11 @@ class ClSimplexSolver : ClTableau
 	// false if not.
 	protected final bool tryAddingDirectly(ClLinearExpression expr)
 	{
-		if (fTraceOn) fnenterprint("tryAddingDirectly: " ~ expr.toString() );
+		fnenterprint("tryAddingDirectly: " ~ expr.toString() );
 		ClAbstractVariable subject = chooseSubject(expr);
 		if (subject is null )
 		{
-			if (fTraceOn) fnexitprint("returning false");
+			fnexitprint("returning false");
 			return false;
 		}
 		expr.newSubject( subject);
@@ -734,7 +735,7 @@ class ClSimplexSolver : ClTableau
 			substituteOut( subject, expr);
 		}
 		addRow( subject, expr);
-		if (fTraceOn) fnexitprint("returning true");
+		fnexitprint("returning true");
 		return true;         // successfully added directly
 	}
 
@@ -758,7 +759,7 @@ class ClSimplexSolver : ClTableau
 	// 'newExpression:', which is called before this method.
 	protected final ClAbstractVariable chooseSubject(ClLinearExpression expr)
 	{
-		if (fTraceOn) fnenterprint("chooseSubject: " ~ expr.toString());
+		fnenterprint("chooseSubject: " ~ expr.toString());
 		ClAbstractVariable subject = null;         // the current best subject, if any
 
 		bool foundUnrestricted = false;
@@ -785,7 +786,7 @@ class ClSimplexSolver : ClTableau
 					{
 						auto col = _columns.get(v, null);
 						if (col is null ||
-							(col.size() == 1 && columnsHasKey(_objective) ) )
+							(col.length == 1 && columnsHasKey(_objective) ) )
 						{
 							subject = v;
 							foundNewRestricted = true;
@@ -847,7 +848,7 @@ class ClSimplexSolver : ClTableau
 										   ClAbstractVariable plusErrorVar,
 										   ClAbstractVariable minusErrorVar)
 	{
-		if (fTraceOn) fnenterprint("deltaEditConstant :" ~ delta.to!string() ~ ", " ~ plusErrorVar.toString() ~ ", " ~ minusErrorVar.toString());
+		fnenterprint("deltaEditConstant :" ~ delta.to!string() ~ ", " ~ plusErrorVar.toString() ~ ", " ~ minusErrorVar.toString());
 		ClLinearExpression exprPlus = rowExpression(plusErrorVar);
 		if (exprPlus !is null )
 		{
@@ -873,7 +874,7 @@ class ClSimplexSolver : ClTableau
 
 		auto columnVars = _columns[minusErrorVar];
 
-		foreach(ClAbstractVariable basicVar; columnVars.elements())
+		foreach(ClAbstractVariable basicVar; columnVars)
 		{
 			ClLinearExpression expr = rowExpression(basicVar);
 			//assert(expr != null, "expr != null" );
@@ -890,11 +891,11 @@ class ClSimplexSolver : ClTableau
 	// Re-optimize using the dual simplex algorithm.
 	protected final void dualOptimize()
 	{
-		if (fTraceOn) fnenterprint("dualOptimize:");
+		fnenterprint("dualOptimize:");
 		ClLinearExpression zRow = rowExpression(_objective);
 		while (!_infeasibleRows.isEmpty())
 		{
-			ClAbstractVariable exitVar = _infeasibleRows.elements()[0];
+			ClAbstractVariable exitVar = _infeasibleRows.anyElement;
 			_infeasibleRows.remove(exitVar);
 			ClAbstractVariable entryVar = null;
 			ClLinearExpression expr = rowExpression(exitVar);
@@ -936,9 +937,9 @@ class ClSimplexSolver : ClTableau
 													 ref ClAbstractVariable[] eplus_eminus,
 													 ref double prevEConstant)
 	{
-		if (fTraceOn) fnenterprint("newExpression: " ~ cn.toString());
-		if (fTraceOn) traceprint("cn.isInequality() == " ~ cn.isInequality().to!string());
-		if (fTraceOn) traceprint("cn.isRequired() == " ~ cn.isRequired().to!string());
+		fnenterprint("newExpression: " ~ cn.toString());
+		traceprint("cn.isInequality() == " ~ cn.isInequality().to!string());
+		traceprint("cn.isRequired() == " ~ cn.isRequired().to!string());
 
 		ClLinearExpression cnExpr = cn.expression();
 		ClLinearExpression expr = new ClLinearExpression(cnExpr.constant());
@@ -984,7 +985,7 @@ class ClSimplexSolver : ClTableau
 				dummyVar = new ClDummyVariable(_dummyCounter, "d");
 				expr.setVariable(dummyVar, 1.0);
 				_markerVars[cn] = dummyVar;
-				if (fTraceOn) traceprint("Adding dummyVar == d" ~ _dummyCounter.to!string());
+				traceprint("Adding dummyVar == d" ~ _dummyCounter.to!string());
 			}
 			else
 			{
@@ -1003,9 +1004,9 @@ class ClSimplexSolver : ClTableau
 
 				if (swCoeff == 0)
 				{
-					if (fTraceOn) traceprint("sw == " ~ sw.to!string());
-					if (fTraceOn) traceprint("cn == " ~ cn.to!string());
-					if (fTraceOn) traceprint("adding " ~ eplus.to!string() ~ " and " ~ eminus.to!string() ~ " with swCoeff == " ~ swCoeff.to!string());
+					traceprint("sw == " ~ sw.to!string());
+					traceprint("cn == " ~ cn.to!string());
+					traceprint("adding " ~ eplus.to!string() ~ " and " ~ eminus.to!string() ~ " with swCoeff == " ~ swCoeff.to!string());
 				}
 
 				zRow.setVariable(eplus, swCoeff);
@@ -1035,7 +1036,7 @@ class ClSimplexSolver : ClTableau
 		if (expr.constant() < 0)
 			expr.multiplyMe(-1);
 
-		if (fTraceOn) fnexitprint("returning " ~ expr.to!string());
+		fnexitprint("returning " ~ expr.to!string());
 		return expr;
 	}
 
@@ -1043,8 +1044,8 @@ class ClSimplexSolver : ClTableau
 	// be feasible.)
 	protected final void optimize(ClObjectiveVariable zVar)
 	{
-		if (fTraceOn) fnenterprint("optimize: " ~ zVar.toString());
-		if (fTraceOn) traceprint(this.toString());
+		fnenterprint("optimize: " ~ zVar.toString());
+		traceprint(this.toString());
 
 		ClLinearExpression zRow = rowExpression(zVar);
 		assert(zRow !is null, "zRow != null");
@@ -1063,24 +1064,24 @@ class ClSimplexSolver : ClTableau
 			}
 			if (objectiveCoeff >= -_epsilon || entryVar is null)
 				return;
-			if (fTraceOn) traceprint("entryVar == " ~ entryVar.to!string() ~ ", objectiveCoeff == " ~ objectiveCoeff.to!string());
+			traceprint("entryVar == " ~ entryVar.to!string() ~ ", objectiveCoeff == " ~ objectiveCoeff.to!string());
 
 			double minRatio = double.max;
 			double r = 0.0;
-			foreach(ClAbstractVariable v; _columns[entryVar].elements())
+			foreach(ClAbstractVariable v; _columns[entryVar])
 			{
-				if (fTraceOn) traceprint("Checking " ~ v.toString());
+				traceprint("Checking " ~ v.toString());
 				if (v.isPivotable())
 				{
 					ClLinearExpression expr = rowExpression(v);
 					double coeff = expr.coefficientFor(entryVar);
-					if (fTraceOn) traceprint("pivotable, coeff = " ~ coeff.to!string());
+					traceprint("pivotable, coeff = " ~ coeff.to!string());
 					if (coeff < 0.0)
 					{
 						r = -expr.constant() / coeff;
 						if (r < minRatio)
 						{
-							if (fTraceOn) traceprint("New minratio == " ~ r.to!string());
+							traceprint("New minratio == " ~ r.to!string());
 							minRatio = r;
 							exitVar = v;
 						}
@@ -1092,7 +1093,7 @@ class ClSimplexSolver : ClTableau
 				throw new ClErrorInternal("Objective function is unbounded in optimize");
 			}
 			pivot(entryVar, exitVar);
-			if (fTraceOn) traceprint(this.toString());
+			traceprint(this.toString());
 		}
 	}
 
@@ -1101,7 +1102,7 @@ class ClSimplexSolver : ClTableau
 	protected final void pivot(ClAbstractVariable entryVar,
 							   ClAbstractVariable exitVar)
 	{
-		if (fTraceOn) fnenterprint("pivot: " ~ entryVar.toString() ~ ", " ~ exitVar.toString());
+		fnenterprint("pivot: " ~ entryVar.toString() ~ ", " ~ exitVar.toString());
 
 		// the entryVar might be non-pivotable if we're doing a removeConstraint --
 		// otherwise it should be a pivotable variable -- enforced at call sites,
@@ -1129,12 +1130,11 @@ class ClSimplexSolver : ClTableau
 	// Reset the constant in this expression to 0.
 	protected final void resetStayConstants()
 	{
-		if (fTraceOn) fnenterprint("resetStayConstants");
+		fnenterprint("resetStayConstants");
 
 		for (int i = 0; i < _stayPlusErrorVars.length; i++)
 		{
-			ClLinearExpression expr =
-				rowExpression(_stayPlusErrorVars[i]);
+			ClLinearExpression expr = rowExpression(_stayPlusErrorVars[i]);
 			if (expr is null )
 				expr = rowExpression(_stayMinusErrorVars[i]);
 			if (expr !is null)
@@ -1154,10 +1154,10 @@ class ClSimplexSolver : ClTableau
 	// them.
 	protected final void setExternalVariables()
 	{
-		if (fTraceOn) fnenterprint("setExternalVariables:");
-		if (fTraceOn) traceprint(this.toString());
+		fnenterprint("setExternalVariables:");
+		traceprint(this.toString());
 
-		foreach(ClAbstractVariable v; _externalParametricVars.elements())
+		foreach(ClAbstractVariable v; _externalParametricVars)
 		{
 			if (rowExpression(v) !is null)
 			{
@@ -1168,11 +1168,11 @@ class ClSimplexSolver : ClTableau
 			(cast(ClVariable)v).change_value(0.0);
 		}
 
-		foreach(ClAbstractVariable v; _externalRows.elements())
+		foreach(ClAbstractVariable v; _externalRows)
 		{
 			ClLinearExpression expr = rowExpression(v);
-			if (fTraceOn) debugprint("v == " ~ v.toString());
-			if (fTraceOn) debugprint("expr == " ~ expr.toString());
+			debugprint("v == " ~ v.toString());
+			debugprint("expr == " ~ expr.toString());
 			(cast(ClVariable)v).change_value(expr.constant());
 		}
 
@@ -1183,7 +1183,7 @@ class ClSimplexSolver : ClTableau
 	// the _errorVars set, creating the mapping with put as necessary
 	protected final void insertErrorVar(ClConstraint cn, ClAbstractVariable var)
 	{
-		if (fTraceOn) fnenterprint("insertErrorVar:" ~ cn.toString() ~ ", " ~ var.toString());
+		fnenterprint("insertErrorVar:" ~ cn.toString() ~ ", " ~ var.toString());
 
 		auto cnset = _errorVars.get(cn, null);
 		if (cnset is null)

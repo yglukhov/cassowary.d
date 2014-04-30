@@ -21,12 +21,12 @@ public class ClEditConstraint : ClEditOrStayConstraint
 		super(clv);
 	}
 
-	override bool isEditConstraint()
+	override bool isEditConstraint() const
 	{
 		return true;
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		return "edit" ~ super.toString();
 	}

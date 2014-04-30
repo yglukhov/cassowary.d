@@ -17,27 +17,27 @@ class ClDummyVariable : ClAbstractVariable
 		super(number, prefix);
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		return "[" ~ name ~ ":dummy]";
 	}
 
-	override bool isDummy()
+	override bool isDummy() const
 	{
 		return true;
 	}
 
-	override bool isExternal()
+	override bool isExternal() const
 	{
 		return false;
 	}
 
-	override bool isPivotable()
+	override bool isPivotable() const
 	{
 		return false;
 	}
 
-	override bool isRestricted()
+	override bool isRestricted() const
 	{
 		return true;
 	}

@@ -1,4 +1,4 @@
-#!/usr/bin/env rdmd -debug -unittest
+#!/usr/bin/env rdmd -debug -unittest -main
 
 import std.stdio;
 import cassowary.d;
@@ -27,5 +27,3 @@ unittest
 	assert(x.value() == y.value() / 3 - 5.0);
 	assert(x.value() == 5);
 }
-
-void main() { }

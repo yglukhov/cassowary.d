@@ -4,51 +4,55 @@ import std.conv;
 
 class Set(TKey = Object)
 {
-	public bool containsKey(TKey o)
+	bool containsKey(TKey o)
 	{
 		return (o in hash) !is null;
 	}
 
-	public void insert(TKey o)
+	void insert(TKey o)
 	{
 		hash[o] = 1;
 	}
 
-	public void remove(TKey o)
+	void remove(TKey o)
 	{
 		hash.remove(o);
 	}
 
-	public void clear()
+	void clear()
 	{
-		hash.clear();
+		hash = null;
 	}
 
-	public auto size()
+	@property auto length()
 	{
-		return hash.length();
+		return hash.length;
 	}
 
-	public bool isEmpty()
+	bool isEmpty()
 	{
-		return hash.length() == 0;
+		return length == 0;
 	}
 
-	public Object clone()
+	@property auto anyElement()
 	{
-		auto result = new typeof(this)();
-		result.hash = hash.dup;
-		return result;
+		return hash.byKey().front;
 	}
 
-	public auto elements()
-	{
-		return hash.keys;
-	}
-
-	public override string toString()
+	override string toString()
 	{
 		return to!string(hash.keys());
+	}
+
+	int opApply(int delegate(ref TKey) operations)
+	{
+		int res = 0;
+		foreach(ref key; hash.byKey())
+		{
+			res = operations(key);
+			if (res) break;
+		}
+		return res;
 	}
 
 	private byte[TKey] hash;

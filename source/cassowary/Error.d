@@ -1,47 +1,46 @@
 module cassowary.Error;
 
-public class ClError : Exception
+class ClError : Exception
 {
 	this()
 	{
-		super("(ExCLError) An error has occured in CL");
+		super("(ClError) An error has occured in CL");
 	}
-}
 
-public class ClErrorConstraintNotFound : ClError
-{
-	public string description()
+	this(string description)
 	{
-		return "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableu";
+		super(description);
 	}
 }
 
-public class ClErrorInternal : ClError
+class ClErrorConstraintNotFound : ClError
+{
+	this()
+	{
+		super("(ClErrorConstraintNotFound) Tried to remove a constraint never added to the tableu");
+	}
+}
+
+class ClErrorInternal : ClError
 {
 	this(string s)
 	{
-		description_ = s;
-	}
-	public string description()
-	{
-		return "(ClErrorInternal) " ~ description_;
-	}
-
-	private string description_;
-}
-
-public class ClErrorNonlinearExpression : ClError
-{
-	public string description()
-	{
-		return "(ExCLNonlinearExpression) The resulting expression would be nonlinear";
+		super("(ClErrorInternal) " ~ s);
 	}
 }
 
-public class ClErrorRequiredFailure : ClError
+class ClErrorNonlinearExpression : ClError
 {
-	public string description()
+	this()
 	{
-		return "(ExCLRequiredFailure) A required constraint cannot be satisfied";
+		super("(ClErrorNonlinearExpression) The resulting expression would be nonlinear");
+	}
+}
+
+class ClErrorRequiredFailure : ClError
+{
+	this()
+	{
+		super("(ClErrorRequiredFailure) A required constraint cannot be satisfied");
 	}
 }

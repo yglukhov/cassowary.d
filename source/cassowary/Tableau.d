@@ -14,8 +14,6 @@ class ClTableau : CL
 	// the ClSimplexSolved class
 	protected this()
 	{
-		// _columns = new Hashtable();
-		// _rows = new Hashtable();
 		_infeasibleRows = new typeof(_infeasibleRows)();
 		_externalRows = new typeof(_externalRows)();
 		_externalParametricVars = new typeof(_externalParametricVars)();
@@ -25,9 +23,9 @@ class ClTableau : CL
 	// expression is in a tableau the corresponding basic variable is
 	// subject (or if subject is nil then it's in the objective function).
 	// Update the column cross-indices.
-	public final void noteRemovedVariable(ClAbstractVariable v, ClAbstractVariable subject)
+	final void noteRemovedVariable(ClAbstractVariable v, ClAbstractVariable subject)
 	{
-		if (fTraceOn) fnenterprint("noteRemovedVariable: " ~ v.toString() ~ ", " ~ subject.toString());
+		fnenterprint("noteRemovedVariable: " ~ v.toString() ~ ", " ~ subject.toString());
 		if (subject !is null)
 		{
 			_columns[v].remove(subject);
@@ -36,9 +34,9 @@ class ClTableau : CL
 
 	// v has been added to the linear expression for subject
 	// update column cross indices
-	public final void noteAddedVariable(ClAbstractVariable v, ClAbstractVariable subject)
+	final void noteAddedVariable(ClAbstractVariable v, ClAbstractVariable subject)
 	{
-		if (fTraceOn) fnenterprint("noteAddedVariable: " ~ v.toString() ~ ", " ~ subject.toString());
+		fnenterprint("noteAddedVariable: " ~ v.toString() ~ ", " ~ subject.toString());
 		if (subject !is null)
 		{
 			insertColVar(v, subject);
@@ -46,16 +44,17 @@ class ClTableau : CL
 	}
 
 	// Originally from Michael Noth <noth@cs>
-	public string getInternalInfo() {
+	string getInternalInfo()
+	{
 		string res = "Tableau Information:\n";
-		res ~= "Rows: " ~ _rows.length().to!string();
+		res ~= "Rows: " ~ _rows.length.to!string();
 
-		res ~= (" (= " ~ (_rows.length() - 1).to!string() ~ " constraints)");
-		res ~= ("\nColumns: " ~ _columns.length().to!string());
-		res ~= ("\nInfeasible Rows: " ~ _infeasibleRows.size().to!string());
-		res ~= ("\nExternal basic variables: " ~ _externalRows.size().to!string());
-		res ~= ("\nExternal parametric variables: ");
-		res ~= (_externalParametricVars.size().to!string());
+		res ~= " (= " ~ (_rows.length - 1).to!string() ~ " constraints)";
+		res ~= "\nColumns: " ~ _columns.length.to!string();
+		res ~= "\nInfeasible Rows: " ~ _infeasibleRows.length.to!string();
+		res ~= "\nExternal basic variables: " ~ _externalRows.length.to!string();
+		res ~= "\nExternal parametric variables: ";
+		res ~= _externalParametricVars.length.to!string();
 		res ~= "\n";
 
 		return res;
@@ -65,27 +64,26 @@ class ClTableau : CL
 	{
 		string res = "Tableau:\n";
 
-
 		foreach(clv, expr; _rows)
 		{
 			res ~= clv.toString();
 
-			res ~= (" <==> ");
-			res ~= (expr.toString());
-			res ~= ("\n");
+			res ~= " <==> ";
+			res ~= expr.toString();
+			res ~= "\n";
 		}
 
-		res ~= ("\nColumns:\n");
+		res ~= "\nColumns:\n";
 		res ~= _columns.to!string();
 
-		res ~= ("\nInfeasible rows: ");
-		res ~= (_infeasibleRows.toString());
+		res ~= "\nInfeasible rows: ";
+		res ~= _infeasibleRows.toString();
 
-		res ~= ("External basic variables: ");
-		res ~= (_externalRows.toString());
+		res ~= "External basic variables: ";
+		res ~= _externalRows.toString();
 
-		res ~= ("External parametric variables: ");
-		res ~= (_externalParametricVars.toString());
+		res ~= "External parametric variables: ";
+		res ~= _externalParametricVars.toString();
 
 		return res;
 	}
@@ -93,8 +91,7 @@ class ClTableau : CL
 	// Convenience function to insert a variable into
 	// the set of rows stored at _columns[param_var],
 	// creating a new set if needed
-	private final void insertColVar(ClAbstractVariable param_var,
-									ClAbstractVariable rowvar)
+	private final void insertColVar(ClAbstractVariable param_var, ClAbstractVariable rowvar)
 	{
 		auto rowset = _columns.get(param_var, null);
 		if (rowset is null)
@@ -112,7 +109,7 @@ class ClTableau : CL
 	// (also, expr better be allocated on the heap!)
 	protected final void addRow(ClAbstractVariable var, ClLinearExpression expr)
 	{
-		if (fTraceOn) fnenterprint("addRow: " ~ var.toString() ~ ", " ~ expr.toString());
+		fnenterprint("addRow: " ~ var.toString() ~ ", " ~ expr.toString());
 
 		// for each variable in expr, add var to the set of rows which
 		// have that variable in their expression
@@ -131,14 +128,14 @@ class ClTableau : CL
 		{
 			_externalRows.insert(var);
 		}
-		if (fTraceOn) traceprint(this.toString());
+		traceprint(this.toString());
 	}
 
 	// Remove v from the tableau -- remove the column cross indices for v
 	// and remove v from every expression in rows in which v occurs
 	protected final void removeColumn(ClAbstractVariable var)
 	{
-		if (fTraceOn) fnenterprint("removeColumn:" ~ var.toString());
+		fnenterprint("removeColumn:" ~ var.toString());
 		// remove the rows with the variables in varset
 
 		auto rows = _columns.get(var, null);
@@ -147,7 +144,7 @@ class ClTableau : CL
 		if (rows !is null)
 		{
 			_columns.remove(var);
-			foreach(ClAbstractVariable clv; rows.elements())
+			foreach(ClAbstractVariable clv; rows)
 			{
 				ClLinearExpression expr = _rows[clv];
 				expr.terms().remove(var);
@@ -155,7 +152,7 @@ class ClTableau : CL
 		}
 		else
 		{
-			if (fTraceOn) debugprint("Could not find var " ~ var.toString() ~ " in _columns");
+			debugprint("Could not find var " ~ var.toString() ~ " in _columns");
 		}
 
 		if (var.isExternal())
@@ -169,9 +166,9 @@ class ClTableau : CL
 	// Then update column cross indices
 	protected final ClLinearExpression removeRow(ClAbstractVariable var)
 	{
-		if (fTraceOn) fnenterprint("removeRow:" ~ var.toString());
+		fnenterprint("removeRow:" ~ var.toString());
 
-		ClLinearExpression expr = rows.get(var, null);
+		ClLinearExpression expr = _rows.get(var, null);
 		assert(expr !is null);
 
 		// For each variable in this expression, update
@@ -182,7 +179,7 @@ class ClTableau : CL
 			auto varset = _columns.get(clv, null);
 			if (varset !is null)
 			{
-				if (fTraceOn) debugprint("removing from varset " ~ var.toString());
+				debugprint("removing from varset " ~ var.toString());
 				varset.remove(var);
 			}
 		}
@@ -194,7 +191,7 @@ class ClTableau : CL
 			_externalRows.remove(var);
 		}
 		_rows.remove(var);
-		if (fTraceOn) fnexitprint("returning " ~ expr.toString());
+		fnexitprint("returning " ~ expr.toString());
 		return expr;
 	}
 
@@ -202,11 +199,11 @@ class ClTableau : CL
 	// oldVar should now be a basic variable
 	protected final void substituteOut(ClAbstractVariable oldVar, ClLinearExpression expr)
 	{
-		if (fTraceOn) fnenterprint("substituteOut:" ~ oldVar.toString() ~ ", " ~ expr.toString());
-		if (fTraceOn) traceprint(this.toString());
+		fnenterprint("substituteOut:" ~ oldVar.toString() ~ ", " ~ expr.toString());
+		traceprint(this.toString());
 
 		auto varset = _columns[oldVar];
-		foreach (ClAbstractVariable v; varset.elements())
+		foreach (ClAbstractVariable v; varset)
 		{
 			ClLinearExpression row = _rows[v];
 			row.substituteOut(oldVar, expr, v, this);
@@ -242,7 +239,7 @@ class ClTableau : CL
 
 	protected final ClLinearExpression rowExpression(ClAbstractVariable v)
 	{
-		// if (fTraceOn) fnenterprint("rowExpression:" + v);
+		// fnenterprint("rowExpression:" + v);
 		return _rows.get(v, null);
 	}
 

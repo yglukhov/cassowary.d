@@ -3,42 +3,43 @@ module cassowary.EditInfo;
 import cassowary.Constraint;
 import cassowary.SlackVariable;
 
-class ClEditInfo
+protected class ClEditInfo
 {
-	this(ClConstraint cn_,
-		 ClSlackVariable eplus_, ClSlackVariable eminus_,
-		 double prevEditConstant_, int i_)
+	this(ClConstraint cn_, ClSlackVariable eplus_, ClSlackVariable eminus_, double prevEditConstant_, int i_)
 	{
-		cn = cn_; clvEditPlus = eplus_; clvEditMinus = eminus_;
-		prevEditConstant = prevEditConstant_; i = i_;
+		cn = cn_;
+		clvEditPlus = eplus_;
+		clvEditMinus = eminus_;
+		prevEditConstant = prevEditConstant_;
+		i = i_;
 	}
 
-	public int Index()
+	int Index()
 	{
 		return i;
 	}
 
-	public ClConstraint Constraint()
+	ClConstraint Constraint()
 	{
 		return cn;
 	}
 
-	public ClSlackVariable ClvEditPlus()
+	ClSlackVariable ClvEditPlus()
 	{
 		return clvEditPlus;
 	}
 
-	public ClSlackVariable ClvEditMinus()
+	ClSlackVariable ClvEditMinus()
 	{
 		return clvEditMinus;
 	}
 
-	public double PrevEditConstant()
+	double PrevEditConstant()
 	{
 		return prevEditConstant;
 	}
 
-	public void SetPrevEditConstant(double prevEditConstant_ )
+	void SetPrevEditConstant(double prevEditConstant_ )
 	{
 		prevEditConstant = prevEditConstant_;
 	}

@@ -54,10 +54,7 @@ class ClLinearEquation : ClLinearConstraint
 		this(clv, val, ClStrength.required, 1.0);
 	}
 
-	this(ClLinearExpression cle,
-		 ClAbstractVariable clv,
-		 ClStrength strength,
-		 double weight)
+	this(ClLinearExpression cle, ClAbstractVariable clv, ClStrength strength, double weight)
 	{
 		super((cast(ClLinearExpression) cle.clone()), strength, weight);
 		_expression.addVariable(clv, -1.0);
@@ -89,7 +86,7 @@ class ClLinearEquation : ClLinearConstraint
 		this(cle1, cle2, ClStrength.required, 1.0);
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		return super.toString() ~ " = 0 )";
 	}

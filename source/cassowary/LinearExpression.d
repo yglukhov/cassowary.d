@@ -44,7 +44,7 @@ class ClLinearExpression
 	protected this(double constant, double[ClAbstractVariable] terms)
 	{
 		_constant = constant;
-		_terms = terms.dup;
+		_terms = terms.dup();
 	}
 
 
@@ -201,7 +201,7 @@ class ClLinearExpression
 	// If the new coefficient is approximately 0, delete v.
 	final ClLinearExpression addVariable(ClAbstractVariable v, double c)
 	{ // body largely duplicated below
-		if (CL.fTraceOn) CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string());
+		CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string());
 
 		double* coeff = v in _terms;
 		if (coeff !is null)
@@ -243,7 +243,7 @@ class ClLinearExpression
 	final ClLinearExpression addVariable(ClAbstractVariable v, double c,
 										 ClAbstractVariable subject, ClTableau solver)
 	{  // body largely duplicated above
-		if (CL.fTraceOn) CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string() ~ ", " ~ subject.toString() ~ ", ...");
+		CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string() ~ ", " ~ subject.toString() ~ ", ...");
 
 		double* coeff = v in _terms;
 		if (coeff !is null)
@@ -300,8 +300,8 @@ class ClLinearExpression
 	final void substituteOut(ClAbstractVariable var, ClLinearExpression expr,
 							 ClAbstractVariable subject, ClTableau solver)
 	{
-		if (CL.fTraceOn) CL.fnenterprint("CLE:substituteOut: " ~ var.toString() ~ ", " ~ expr.toString() ~ ", " ~ subject.toString() ~ ", ...");
-		if (CL.fTraceOn) CL.traceprint("this = " ~ this.toString());
+		CL.fnenterprint("CLE:substituteOut: " ~ var.toString() ~ ", " ~ expr.toString() ~ ", " ~ subject.toString() ~ ", ...");
+		CL.traceprint("this = " ~ this.toString());
 
 		double multiplier = _terms[var];
 		_terms.remove(var);
@@ -331,7 +331,7 @@ class ClLinearExpression
 				solver.noteAddedVariable(clv, subject);
 			}
 		}
-		if (CL.fTraceOn) CL.traceprint("Now this is " ~ this.toString());
+		CL.traceprint("Now this is " ~ this.toString());
 	}
 
 	// This linear expression currently represents the equation
@@ -372,7 +372,7 @@ class ClLinearExpression
 	// Returns the reciprocal, so changeSubject can use it, too
 	final double newSubject(ClAbstractVariable subject)
 	{
-		if (CL.fTraceOn) CL.fnenterprint("newSubject:" ~ subject.toString());
+		CL.fnenterprint("newSubject:" ~ subject.toString());
 		double coeff = _terms[subject];
 		double reciprocal = 1.0 / coeff;
 		multiplyMe(-reciprocal);
@@ -410,20 +410,20 @@ class ClLinearExpression
 
 	final bool isConstant()
 	{
-		return _terms.length() == 0;
+		return _terms.length == 0;
 	}
 
 	override string toString()
 	{
 		string res = "";
 
-		if (!approxEqual(_constant, 0.0) || _terms.length() == 0)
+		if (!approxEqual(_constant, 0.0) || _terms.length == 0)
 		{
 			res ~= _constant.to!string();
 		}
 		else
 		{
-			if (_terms.length() == 0)
+			if (_terms.length == 0)
 			{
 				return res;
 			}

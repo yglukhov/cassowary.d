@@ -1,84 +1,59 @@
 module cassowary.SymbolicWeight;
 
 import std.conv;
+import std.algorithm;
+import std.array;
 
-public class ClSymbolicWeight
+class ClSymbolicWeight
 {
-	this(int cLevels)
+	this(int cLevels) pure @safe nothrow
 	{
 		_values = new double[cLevels];
-		// FIXGJB: ok to assume these get initialized to 0?
-		//       for (int i = 0; i < cLevels; i++) {
-		//  _values[i] = 0;
-		//       }
 	}
 
-	this(double w1, double w2, double w3)
+	this(double w1, double w2, double w3) pure @safe nothrow
 	{
-		_values = new double[3];
-		_values[0] = w1;
-		_values[1] = w2;
-		_values[2] = w3;
+		_values = [w1, w2, w3];
 	}
 
-	this(double[] weights)
+	this(immutable double[] weights) pure @safe nothrow
 	{
-		_values = weights.dup;
+		_values = weights;
 	}
 
-	public static const ClSymbolicWeight clsZero = new ClSymbolicWeight(0.0, 0.0, 0.0);
+	static immutable ClSymbolicWeight clsZero = new immutable ClSymbolicWeight(0.0, 0.0, 0.0);
 
-	public Object clone()
+	ClSymbolicWeight times(double n) const
 	{
-		return new ClSymbolicWeight(_values);
+		return new ClSymbolicWeight(_values.map!(a => a * n)().array().idup);
 	}
 
-	public ClSymbolicWeight times(double n)
+	ClSymbolicWeight divideBy(double n) const
 	{
-		ClSymbolicWeight clsw = cast(ClSymbolicWeight) clone();
+		return new ClSymbolicWeight(_values.map!(a => a / n)().array().idup);
+	}
+
+	ClSymbolicWeight add(ClSymbolicWeight cl) const
+	{
+		auto newValues = _values.dup;
 		for (int i = 0; i < _values.length; i++)
 		{
-			clsw._values[i] *= n;
+			newValues[i] += cl._values[i];
 		}
-		return clsw;
+		return new ClSymbolicWeight(newValues.idup);
 	}
 
-	public ClSymbolicWeight divideBy(double n)
+	ClSymbolicWeight subtract(ClSymbolicWeight cl) const
 	{
-		// assert(n != 0);
-		ClSymbolicWeight clsw = cast(ClSymbolicWeight) clone();
+		auto newValues = _values.dup;
 		for (int i = 0; i < _values.length; i++)
 		{
-			clsw._values[i] /= n;
+			newValues[i] -= cl._values[i];
 		}
-		return clsw;
+		return new ClSymbolicWeight(newValues.idup);
 	}
 
-	public ClSymbolicWeight add(ClSymbolicWeight cl)
-	{
-		// assert(cl.cLevels() == cLevels());
-
-		ClSymbolicWeight clsw = cast(ClSymbolicWeight) clone();
-		for (int i = 0; i < _values.length; i++)
-		{
-			clsw._values[i] += cl._values[i];
-		}
-		return clsw;
-	}
-
-	public ClSymbolicWeight subtract(ClSymbolicWeight cl)
-	{
-		// assert(cl.cLevels() == cLevels());
-
-		ClSymbolicWeight clsw = cast(ClSymbolicWeight) clone();
-		for (int i = 0; i < _values.length; i++)
-		{
-			clsw._values[i] -= cl._values[i];
-		}
-		return clsw;
-	}
-
-	public bool lessThan(const ClSymbolicWeight cl)
+	bool lessThan(const ClSymbolicWeight cl) const pure
 	{
 		// assert cl.cLevels() == cLevels()
 		for (int i = 0; i < _values.length; i++)
@@ -91,7 +66,7 @@ public class ClSymbolicWeight
 		return false; // they are equal
 	}
 
-	public bool lessThanOrEqual(ClSymbolicWeight cl)
+	bool lessThanOrEqual(ClSymbolicWeight cl) const pure
 	{
 		// assert cl.cLevels() == cLevels()
 		for (int i = 0; i < _values.length; i++)
@@ -104,8 +79,7 @@ public class ClSymbolicWeight
 		return true; // they are equal
 	}
 
-	public
-	bool equal(ClSymbolicWeight cl)
+	bool equal(ClSymbolicWeight cl) const pure @safe
 	{
 		for (int i = 0; i < _values.length; i++)
 		{
@@ -115,22 +89,22 @@ public class ClSymbolicWeight
 		return true; // they are equal
 	}
 
-	public bool greaterThan(ClSymbolicWeight cl)
+	bool greaterThan(ClSymbolicWeight cl) const pure
 	{
 		return !this.lessThanOrEqual(cl);
 	}
 
-	public bool greaterThanOrEqual(ClSymbolicWeight cl)
+	bool greaterThanOrEqual(ClSymbolicWeight cl) const pure
 	{
 		return !this.lessThan(cl);
 	}
 
-	public bool isNegative()
+	bool isNegative() const pure
 	{
 		return this.lessThan(clsZero);
 	}
 
-	public double asDouble()
+	double asDouble() const pure @safe
 	{
 		double sum = 0;
 		double factor = 1;
@@ -143,24 +117,15 @@ public class ClSymbolicWeight
 		return sum;
 	}
 
-	public override string toString()
+	override string toString() const
 	{
-		string res = "[";
-
-		for (ulong i = 0; i < _values.length-1; i++)
-		{
-			res ~= _values[i].to!string();
-			res ~= ",";
-		}
-		res ~= _values[$-1].to!string();
-		res ~= "]";
-		return res;
+		return _values.to!string();
 	}
 
-	public ulong cLevels()
+	ulong cLevels() const pure @safe nothrow
 	{
 		return _values.length;
 	}
 
-	private double[] _values;
+	private immutable double[] _values;
 }

@@ -5,69 +5,62 @@ import std.conv;
 import cassowary.Strength;
 import cassowary.LinearExpression;
 
-public abstract class ClConstraint
+abstract class ClConstraint
 {
 	this(ClStrength strength, double weight)
 	{
-		_strength = strength; _weight = weight;
+		_strength = strength;
+		 _weight = weight;
 	}
 
 	this(ClStrength strength)
 	{
-		_strength = strength; _weight = 1.0;
+		_strength = strength;
+		 _weight = 1.0;
 	}
 
 	this()
 	{
-		_strength = ClStrength.required; _weight = 1.0;
+		_strength = ClStrength.required;
+		 _weight = 1.0;
 	}
 
-	public abstract ClLinearExpression expression();
+	abstract ClLinearExpression expression();
 
-	public bool isEditConstraint()
+	bool isEditConstraint() const
 	{
 		return false;
 	}
 
-	public bool isInequality()
+	bool isInequality() const
 	{
 		return false;
 	}
 
-	public bool isRequired()
+	bool isRequired() const
 	{
 		return _strength.isRequired();
 	}
 
-	public bool isStayConstraint()
+	bool isStayConstraint() const
 	{
 		return false;
 	}
 
-	public ClStrength strength()
+	ClStrength strength()
 	{
 		return _strength;
 	}
 
-	public double weight()
+	double weight() const
 	{
 		return _weight;
 	}
 
-	public override string toString()
+	override string toString() const
 	{
 		return _strength.toString() ~
-			   " {" ~ weight().to!string() ~ "} (" ~ expression().toString();
-	}
-
-	public void setAttachedObject(Object o)
-	{
-		_attachedObject = o;
-	}
-
-	public Object getAttachedObject()
-	{
-		return _attachedObject;
+			   " {" ~ weight().to!string() ~ "} (" ~ (cast(ClConstraint)this).expression().toString();
 	}
 
 	private void setStrength(ClStrength strength)
@@ -80,8 +73,8 @@ public abstract class ClConstraint
 		_weight = weight;
 	}
 
+	Object attachedObject;
+
 	private ClStrength _strength;
 	private double _weight;
-
-	private Object _attachedObject;
 }

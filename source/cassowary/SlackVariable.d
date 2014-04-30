@@ -8,30 +8,34 @@ class ClSlackVariable : ClAbstractVariable
 	// friend ClSimplexSolver;
 
 	this(string theName)
-	{  super(theName); }
+	{
+		super(theName);
+	}
 
 	this()
 	{  }
 
 	this(long number, string prefix)
-	{ super(number, prefix); }
+	{
+		super(number, prefix);
+	}
 
-	override string toString()
+	override string toString() const
 	{
 		return "[" ~ name ~ ":slack]";
 	}
 
-	override bool isExternal()
+	override bool isExternal() const
 	{
 		return false;
 	}
 
-	override bool isPivotable()
+	override bool isPivotable() const
 	{
 		return true;
 	}
 
-	override bool isRestricted()
+	override bool isRestricted() const
 	{
 		return true;
 	}
