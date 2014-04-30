@@ -4,14 +4,15 @@ import std.conv;
 
 class Set(TKey = Object)
 {
-	bool containsKey(TKey o)
+	bool opBinary(string op) (const TKey o) if (op == "in")
 	{
 		return (o in hash) !is null;
 	}
 
-	void insert(TKey o)
+	auto opOpAssign(string op) (ref TKey o) if (op == "~")
 	{
 		hash[o] = 1;
+		return this;
 	}
 
 	void remove(TKey o)
@@ -24,12 +25,12 @@ class Set(TKey = Object)
 		hash = null;
 	}
 
-	@property auto length()
+	@property auto length() const
 	{
 		return hash.length;
 	}
 
-	bool isEmpty()
+	bool isEmpty() const
 	{
 		return length == 0;
 	}
@@ -39,9 +40,9 @@ class Set(TKey = Object)
 		return hash.byKey().front;
 	}
 
-	override string toString()
+	override string toString() const
 	{
-		return to!string(hash.keys());
+		return hash.keys().to!string();
 	}
 
 	int opApply(int delegate(ref TKey) operations)

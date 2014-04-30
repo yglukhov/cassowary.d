@@ -6,19 +6,9 @@ import cassowary.Variable;
 
 public class ClEditConstraint : ClEditOrStayConstraint
 {
-	this(ClVariable clv, ClStrength strength, double weight)
+	this(ClVariable clv, const ClStrength strength = ClStrength.required, double weight = 1)
 	{
 		super(clv, strength, weight);
-	}
-
-	this(ClVariable clv, ClStrength strength)
-	{
-		super(clv, strength);
-	}
-
-	this(ClVariable clv)
-	{
-		super(clv);
 	}
 
 	override bool isEditConstraint() const

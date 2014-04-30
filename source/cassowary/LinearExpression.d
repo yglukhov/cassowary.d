@@ -12,41 +12,24 @@ import cassowary.Error;
 
 class ClLinearExpression
 {
-	this(ClAbstractVariable clv, double value, double constant)
+	this(ClAbstractVariable clv, double value = 1, double constant = 0)
 	{
 		_constant = constant;
 		if (clv !is null)
 			_terms[clv] = value;
 	}
 
-	this(double num)
+	this(double num = 0)
 	{
 		this(null, 0, num);
 	}
 
-	this()
-	{
-		this(0);
-	}
-
-	this(ClAbstractVariable clv, double value)
-	{
-		this(clv, value, 0.0);
-	}
-
-	this(ClAbstractVariable clv)
-	{
-		this(clv, 1, 0);
-	}
-
-
 	// for use by the clone method
-	protected this(double constant, double[ClAbstractVariable] terms)
+	private this(double constant, double[ClAbstractVariable] terms)
 	{
 		_constant = constant;
 		_terms = terms.dup();
 	}
-
 
 	ClLinearExpression multiplyMe(double x)
 	{
@@ -179,10 +162,9 @@ class ClLinearExpression
 	}
 
 	// Add n*expr to this expression from another expression expr.
-	final ClLinearExpression addExpression(ClLinearExpression expr, double n)
+	final ClLinearExpression addExpression(ClLinearExpression expr, double n = 1)
 	{
 		incrementConstant(n * expr.constant());
-
 
 		foreach(ClAbstractVariable clv, coeff; expr.terms())
 		{
@@ -191,17 +173,12 @@ class ClLinearExpression
 		return this;
 	}
 
-	final ClLinearExpression addExpression(ClLinearExpression expr)
-	{
-		return addExpression(expr, 1.0);
-	}
-
 	// Add a term c*v to this expression.  If the expression already
 	// contains a term involving v, add c to the existing coefficient.
 	// If the new coefficient is approximately 0, delete v.
 	final ClLinearExpression addVariable(ClAbstractVariable v, double c)
 	{ // body largely duplicated below
-		CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string());
+		fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string());
 
 		double* coeff = v in _terms;
 		if (coeff !is null)
@@ -228,7 +205,6 @@ class ClLinearExpression
 		return addVariable(v, 1.0);
 	}
 
-
 	final ClLinearExpression setVariable(ClAbstractVariable v, double c)
 	{
 		//assert(c != 0.0);
@@ -243,7 +219,7 @@ class ClLinearExpression
 	final ClLinearExpression addVariable(ClAbstractVariable v, double c,
 										 ClAbstractVariable subject, ClTableau solver)
 	{  // body largely duplicated above
-		CL.fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string() ~ ", " ~ subject.toString() ~ ", ...");
+		fnenterprint("addVariable:" ~ v.toString() ~ ", " ~ c.to!string() ~ ", " ~ subject.toString() ~ ", ...");
 
 		double* coeff = v in _terms;
 		if (coeff !is null)
@@ -300,8 +276,8 @@ class ClLinearExpression
 	final void substituteOut(ClAbstractVariable var, ClLinearExpression expr,
 							 ClAbstractVariable subject, ClTableau solver)
 	{
-		CL.fnenterprint("CLE:substituteOut: " ~ var.toString() ~ ", " ~ expr.toString() ~ ", " ~ subject.toString() ~ ", ...");
-		CL.traceprint("this = " ~ this.toString());
+		fnenterprint("CLE:substituteOut: " ~ var.toString() ~ ", " ~ expr.toString() ~ ", " ~ subject.toString() ~ ", ...");
+		traceprint("this = " ~ this.toString());
 
 		double multiplier = _terms[var];
 		_terms.remove(var);
@@ -331,7 +307,7 @@ class ClLinearExpression
 				solver.noteAddedVariable(clv, subject);
 			}
 		}
-		CL.traceprint("Now this is " ~ this.toString());
+		traceprint("Now this is " ~ this.toString());
 	}
 
 	// This linear expression currently represents the equation
@@ -372,7 +348,7 @@ class ClLinearExpression
 	// Returns the reciprocal, so changeSubject can use it, too
 	final double newSubject(ClAbstractVariable subject)
 	{
-		CL.fnenterprint("newSubject:" ~ subject.toString());
+		fnenterprint("newSubject:" ~ subject.toString());
 		double coeff = _terms[subject];
 		double reciprocal = 1.0 / coeff;
 		multiplyMe(-reciprocal);
@@ -388,7 +364,7 @@ class ClLinearExpression
 		return (coeff is null) ? 0.0 : *coeff;
 	}
 
-	final double constant()
+	final double constant() const
 	{
 		return _constant;
 	}
@@ -408,12 +384,12 @@ class ClLinearExpression
 		_constant += c;
 	}
 
-	final bool isConstant()
+	final bool isConstant() const
 	{
 		return _terms.length == 0;
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		string res = "";
 
@@ -431,31 +407,6 @@ class ClLinearExpression
 			res ~= _terms.to!string();
 		}
 		return res;
-	}
-
-	final static ClLinearExpression Plus(ClLinearExpression e1, ClLinearExpression e2)
-	{
-		return e1.plus(e2);
-	}
-
-	final static ClLinearExpression Minus(ClLinearExpression e1, ClLinearExpression e2)
-	{
-		return e1.minus(e2);
-	}
-
-	final static ClLinearExpression Times(ClLinearExpression e1, ClLinearExpression e2)
-	{
-		return e1.times(e2);
-	}
-
-	final static ClLinearExpression Divide(ClLinearExpression e1, ClLinearExpression e2)
-	{
-		return e1.divide(e2);
-	}
-
-	final static bool FEquals(ClLinearExpression e1, ClLinearExpression e2)
-	{
-		return e1 == e2;
 	}
 
 	private double _constant;

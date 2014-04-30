@@ -4,16 +4,16 @@ import cassowary.SymbolicWeight;
 
 class ClStrength
 {
-	this(string name, ClSymbolicWeight symbolicWeight) pure @safe nothrow
+	this(string theName, const ClSymbolicWeight weight) pure @safe nothrow
 	{
-		_name = name;
-		_symbolicWeight = symbolicWeight;
+		name = theName;
+		symbolicWeight = weight;
 	}
 
-	this(string name, double w1, double w2, double w3) pure @safe nothrow
+	this(string theName, double w1, double w2, double w3) pure @safe nothrow immutable
 	{
-		_name = name;
-		_symbolicWeight = new ClSymbolicWeight(w1, w2, w3);
+		name = theName;
+		symbolicWeight = new immutable ClSymbolicWeight(w1, w2, w3);
 	}
 
 	bool isRequired() const
@@ -23,46 +23,14 @@ class ClStrength
 
 	override string toString() const
 	{
-		return name () ~(!isRequired() ? (":" ~ _symbolicWeight.toString()) : "");
+		return name ~ (!isRequired() ? (":" ~ symbolicWeight.toString()) : "");
 	}
 
-	ClSymbolicWeight symbolicWeight()
-	{
-		return _symbolicWeight;
-	}
+	string name;
+	const ClSymbolicWeight symbolicWeight;
 
-	string name() const
-	{
-		return _name;
-	}
-
-	void set_name(string name)
-	{
-		_name = name;
-	}
-
-	void set_symbolicWeight(ClSymbolicWeight symbolicWeight)
-	{
-		_symbolicWeight = symbolicWeight;
-	}
-
-	static ClStrength required;
-
-	static ClStrength strong;
-
-	static ClStrength medium;
-
-	static ClStrength weak;
-
-	static this()
-	{
-		required = new ClStrength("<Required>", 1000, 1000, 1000);
-		strong = new ClStrength("strong", 1.0, 0.0, 0.0);
-		medium = new ClStrength("medium", 0.0, 1.0, 0.0);
-		weak = new ClStrength("weak", 0.0, 0.0, 1.0);
-	}
-
-	private string _name;
-
-	private ClSymbolicWeight _symbolicWeight;
+	immutable shared static ClStrength required = new immutable ClStrength("<Required>", 1000, 1000, 1000);
+	immutable shared static ClStrength strong = new immutable ClStrength("strong", 1.0, 0.0, 0.0);
+	immutable shared static ClStrength medium = new immutable ClStrength("medium", 0.0, 1.0, 0.0);
+	immutable shared static ClStrength weak = new immutable ClStrength("weak", 0.0, 0.0, 1.0);
 }

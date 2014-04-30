@@ -6,7 +6,7 @@ import cassowary.LinearExpression;
 
 class ClVariable : ClAbstractVariable
 {
-	this(string name, double value)
+	this(string name, double value = 0)
 	{
 		super(name);
 		_value = value;
@@ -16,31 +16,15 @@ class ClVariable : ClAbstractVariable
 		}
 	}
 
-	this(string name)
-	{
-		this(name, 0.0);
-	}
-
-	this(double value)
+	this(double value = 0)
 	{
 		_value = value;
 	}
 
-	this()
-	{
-		_value = 0.0;
-	}
-
-	this(long number, string prefix, double value)
+	this(long number, string prefix, double value = 0)
 	{
 		super(number, prefix);
 		_value = value;
-	}
-
-	this(long number, string prefix)
-	{
-		super(number, prefix);
-		_value = 0.0;
 	}
 
 	override bool isDummy() const

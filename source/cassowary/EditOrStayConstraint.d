@@ -7,25 +7,14 @@ import cassowary.LinearExpression;
 
 abstract class ClEditOrStayConstraint : ClConstraint
 {
-	this(ClVariable var, ClStrength strength, double weight)
+	this(ClVariable var, const ClStrength strength = ClStrength.required, double weight = 1)
 	{
 		super(strength, weight);
 		_variable = var;
 		_expression = new ClLinearExpression(_variable, -1.0, _variable.value());
 	}
 
-	this(ClVariable var, ClStrength strength)
-	{
-		this(var, strength, 1.0);
-	}
-
-	this(ClVariable var)
-	{
-		this(var, ClStrength.required, 1.0);
-		_variable = var;
-	}
-
-	public ClVariable variable()
+	ClVariable variable()
 	{
 		return _variable;
 	}
@@ -35,12 +24,7 @@ abstract class ClEditOrStayConstraint : ClConstraint
 		return _expression;
 	}
 
-	private void setVariable(ClVariable v)
-	{
-		_variable = v;
-	}
-
-	protected ClVariable _variable;
+	private ClVariable _variable;
 	// cache the expresion
 	private ClLinearExpression _expression;
 }

@@ -8,7 +8,7 @@ import cassowary.Variable;
 import cassowary.set;
 import cassowary.Cl;
 
-class ClTableau : CL
+class ClTableau
 {
 	// ctr is protected, since this only supports an ADT for
 	// the ClSimplexSolved class
@@ -60,7 +60,7 @@ class ClTableau : CL
 		return res;
 	}
 
-	override string toString()
+	override string toString() const
 	{
 		string res = "Tableau:\n";
 
@@ -99,7 +99,7 @@ class ClTableau : CL
 			rowset = new typeof(rowset)();
 			_columns[param_var] = rowset;
 		}
-		rowset.insert(rowvar);
+		rowset ~= rowvar;
 	}
 
 	// Add v=expr to the tableau, update column cross indices
@@ -120,13 +120,13 @@ class ClTableau : CL
 			insertColVar(clv, var);
 			if (clv.isExternal())
 			{
-				_externalParametricVars.insert(clv);
+				_externalParametricVars ~= clv;
 			}
 		}
 
 		if (var.isExternal())
 		{
-			_externalRows.insert(var);
+			_externalRows ~= var;
 		}
 		traceprint(this.toString());
 	}
@@ -209,13 +209,13 @@ class ClTableau : CL
 			row.substituteOut(oldVar, expr, v, this);
 			if (v.isRestricted() && row.constant() < 0.0)
 			{
-				_infeasibleRows.insert(v);
+				_infeasibleRows ~= v;
 			}
 		}
 
 		if (oldVar.isExternal())
 		{
-			_externalRows.insert(oldVar);
+			_externalRows ~= oldVar;
 			_externalParametricVars.remove(oldVar);
 		}
 		_columns.remove(oldVar);

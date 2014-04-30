@@ -7,11 +7,17 @@ unittest
 {
 	auto a = new ClVariable(5);
 	auto b = new ClVariable(6);
-	auto constraint = new ClLinearEquation(a + b, new ClLinearExpression(10));
+
 	auto solver = new ClSimplexSolver();
+
+	auto constraint = new ClLinearEquation(a + b, new ClLinearExpression(10));
+	solver.addConstraint(constraint);
+
+	constraint = new ClLinearEquation(a, b);
 	solver.addConstraint(constraint);
 
 	assert(a.value() + b.value() == 10);
+	assert(a.value() == b.value());
 }
 
 unittest

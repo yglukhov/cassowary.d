@@ -1,28 +1,17 @@
 module cassowary.Constraint;
 
 import std.conv;
+import std.typecons;
 
 import cassowary.Strength;
 import cassowary.LinearExpression;
 
 abstract class ClConstraint
 {
-	this(ClStrength strength, double weight)
+	this(const ClStrength strength = ClStrength.required, double weight = 1)
 	{
 		_strength = strength;
-		 _weight = weight;
-	}
-
-	this(ClStrength strength)
-	{
-		_strength = strength;
-		 _weight = 1.0;
-	}
-
-	this()
-	{
-		_strength = ClStrength.required;
-		 _weight = 1.0;
+		_weight = weight;
 	}
 
 	abstract ClLinearExpression expression();
@@ -47,7 +36,7 @@ abstract class ClConstraint
 		return false;
 	}
 
-	ClStrength strength()
+	const(ClStrength) strength()
 	{
 		return _strength;
 	}
@@ -75,6 +64,6 @@ abstract class ClConstraint
 
 	Object attachedObject;
 
-	private ClStrength _strength;
+	private Rebindable!(const ClStrength) _strength;
 	private double _weight;
 }

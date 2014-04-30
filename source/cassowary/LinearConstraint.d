@@ -6,21 +6,9 @@ import cassowary.Strength;
 
 class ClLinearConstraint : ClConstraint
 {
-	this(ClLinearExpression cle, ClStrength strength, double weight)
+	this(ClLinearExpression cle, const ClStrength strength = ClStrength.required, double weight = 1)
 	{
 		super(strength, weight);
-		_expression = cle;
-	}
-
-	this(ClLinearExpression cle, ClStrength strength)
-	{
-		super(strength, 1.0);
-		_expression = cle;
-	}
-
-	this(ClLinearExpression cle)
-	{
-		super(ClStrength.required, 1.0);
 		_expression = cle;
 	}
 

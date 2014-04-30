@@ -5,7 +5,7 @@ import cassowary.SlackVariable;
 
 protected class ClEditInfo
 {
-	this(ClConstraint cn_, ClSlackVariable eplus_, ClSlackVariable eminus_, double prevEditConstant_, int i_)
+	this(ClConstraint cn_, ClSlackVariable eplus_, ClSlackVariable eminus_, double prevEditConstant_, size_t i_)
 	{
 		cn = cn_;
 		clvEditPlus = eplus_;
@@ -14,7 +14,7 @@ protected class ClEditInfo
 		i = i_;
 	}
 
-	int Index()
+	size_t Index() const
 	{
 		return i;
 	}
@@ -34,12 +34,12 @@ protected class ClEditInfo
 		return clvEditMinus;
 	}
 
-	double PrevEditConstant()
+	double PrevEditConstant() const
 	{
 		return prevEditConstant;
 	}
 
-	void SetPrevEditConstant(double prevEditConstant_ )
+	void SetPrevEditConstant(double prevEditConstant_)
 	{
 		prevEditConstant = prevEditConstant_;
 	}
@@ -48,5 +48,5 @@ protected class ClEditInfo
 	private ClSlackVariable clvEditPlus;
 	private ClSlackVariable clvEditMinus;
 	private double prevEditConstant;
-	private int i;
+	private size_t i;
 }
